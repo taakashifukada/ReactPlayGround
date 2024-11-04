@@ -1,28 +1,57 @@
 import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogFooter } from '@/components/ui/dialog';
+import { Button } from './ui/button';
+import { Dialog, DialogContent, DialogFooter } from './ui/dialog';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
-import { Card, CardContent } from '@/components/ui/card';
+import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
+import { Card, CardContent } from './ui/card';
+
+// 型定義
+interface TabData {
+  id: string;
+  title: string;
+  data: ContentItem[];
+}
+
+interface ContentItem {
+  id: number;
+  title: string;
+  description: string;
+}
+
+interface ImageItem {
+  id: number;
+  url: string;
+  alt: string;
+}
+
+interface State {
+  selectedImage: number | null;
+  prompt: string;
+  confirmedImage: number | null;
+}
+
+interface TabStates {
+  [key: string]: State;
+}
 
 const MAX_TABS = 2;
 
 const ImageSelector = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
-  const [currentTab, setCurrentTab] = useState(null);
-  const [activeTabs, setActiveTabs] = useState([]);
+  const [currentTab, setCurrentTab] = useState<string | null>(null);
+  const [activeTabs, setActiveTabs] = useState<TabData[]>([]);
   const [hasChanges, setHasChanges] = useState(false);
   
-  const [workingState, setWorkingState] = useState({
+  const [workingState, setWorkingState] = useState<State>({
     selectedImage: null,
     prompt: '',
     confirmedImage: null
   });
   
-  const [tabStates, setTabStates] = useState({});
+  const [tabStates, setTabStates] = useState<TabStates>({});
 
-  const sampleImages = Array.from({ length: 12 }, (_, i) => ({
+  const sampleImages: ImageItem[] = Array.from({ length: 12 }, (_, i) => ({
     id: i + 1,
     url: '/api/placeholder/200/200',
     alt: `Sample ${i + 1}`
@@ -33,19 +62,21 @@ const ImageSelector = () => {
       setHasChanges(workingState.selectedImage !== null || workingState.prompt.length > 0);
     } else {
       const savedState = tabStates[currentTab];
-      const hasImageChange = workingState.selectedImage !== savedState.selectedImage;
-      const hasPromptChange = workingState.prompt !== savedState.prompt;
-      setHasChanges(hasImageChange || hasPromptChange);
+      if (savedState) {
+        const hasImageChange = workingState.selectedImage !== savedState.selectedImage;
+        const hasPromptChange = workingState.prompt !== savedState.prompt;
+        setHasChanges(hasImageChange || hasPromptChange);
+      }
     }
   }, [currentTab, workingState, tabStates]);
 
   useEffect(() => {
-    if (currentTab) {
+    if (currentTab && tabStates[currentTab]) {
       setWorkingState(tabStates[currentTab]);
     }
-  }, [currentTab]);
+  }, [currentTab, tabStates]);
 
-  const generateDummyContent = (count) => {
+  const generateDummyContent = (count: number): ContentItem[] => {
     return Array.from({ length: count }, (_, i) => ({
       id: i + 1,
       title: `Content Item ${i + 1}`,
@@ -65,7 +96,7 @@ const ImageSelector = () => {
     );
   };
 
-  const handleImageSelect = (imageId) => {
+  const handleImageSelect = (imageId: number) => {
     setWorkingState(prev => ({
       ...prev,
       selectedImage: imageId
@@ -80,21 +111,21 @@ const ImageSelector = () => {
     setIsOpen(false);
   };
 
-  const handlePromptChange = (e) => {
+  const handlePromptChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setWorkingState(prev => ({
       ...prev,
       prompt: e.target.value
     }));
   };
 
-  const handleTabChange = (tabId) => {
+  const handleTabChange = (tabId: string) => {
     setCurrentTab(tabId);
   };
 
   const handleSubmit = () => {
     if (activeTabs.length === 0) {
       // 初回のsubmit: Tab 1を作成
-      const newTab = {
+      const newTab: TabData = {
         id: 'tab1',
         title: 'Tab 1',
         data: generateDummyContent(10)
@@ -106,7 +137,7 @@ const ImageSelector = () => {
       setCurrentTab('tab1');
     } else if (activeTabs.length === 1) {
       // 2つ目のタブを追加
-      const newTab = {
+      const newTab: TabData = {
         id: 'tab2',
         title: 'Tab 2',
         data: generateDummyContent(10)
@@ -117,7 +148,7 @@ const ImageSelector = () => {
         [newTab.id]: { ...workingState }
       }));
       setCurrentTab('tab2');
-    } else {
+    } else if (currentTab) {
       // タブが2つある状態でのsubmit
       const currentTabIndex = activeTabs.findIndex(tab => tab.id === currentTab);
       const otherTabIndex = currentTabIndex === 0 ? 1 : 0;
@@ -201,7 +232,7 @@ const ImageSelector = () => {
         {/* タブ */}
         {activeTabs.length > 0 && (
           <Tabs 
-            value={currentTab} 
+            value={currentTab || undefined}
             onValueChange={handleTabChange} 
             className="w-full bg-white rounded-lg shadow-lg border border-gray-100"
           >
@@ -264,7 +295,7 @@ const ImageSelector = () => {
       <Dialog 
         open={isOpen} 
         onOpenChange={setIsOpen}
-        onInteractOutside={(e) => e.preventDefault()}
+        modal={true}
       >
         <DialogContent className="max-w-4xl bg-white rounded-xl shadow-2xl p-6">
           <div className="relative">
