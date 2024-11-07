@@ -4,39 +4,15 @@ import { Dialog, DialogContent, DialogFooter } from './ui/dialog';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { Tabs, TabsList, TabsTrigger, TabsContent } from './ui/tabs';
 import { Card, CardContent } from './ui/card';
-
-// 型定義
-interface TabData {
-  id: string;
-  title: string;
-  data: ContentItem[];
-}
-
-interface ContentItem {
-  id: number;
-  title: string;
-  description: string;
-}
-
-interface ImageItem {
-  id: number;
-  url: string;
-  alt: string;
-}
-
-interface State {
-  selectedImage: number | null;
-  prompt: string;
-  confirmedImage: number | null;
-}
-
-interface TabStates {
-  [key: string]: State;
-}
+import { TabData } from '../types/form/TabData';
+import { ContentItem } from '../types/form/ContentItem';
+import { ImageItem } from '../types/form/ImageItem';
+import { State } from '../types/form/State';
+import { TabStates } from '../types/form/TabStates';
 
 const MAX_TABS = 2;
 
-const ImageSelector = () => {
+const Form = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [carouselIndex, setCarouselIndex] = useState(0);
   const [currentTab, setCurrentTab] = useState<string | null>(null);
@@ -357,7 +333,6 @@ const ImageSelector = () => {
                        disabled:opacity-50 disabled:cursor-not-allowed"
               size="lg"
             >
-              決定
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -366,4 +341,4 @@ const ImageSelector = () => {
   );
 };
 
-export default ImageSelector;
+export default Form;
