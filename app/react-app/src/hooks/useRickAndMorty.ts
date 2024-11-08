@@ -14,6 +14,8 @@ export const useRickAndMorty = () => {
     useEffect(() => {
       const fetchCharacters = async () => {
         try {
+          setLoading(true)
+          await delay(1000)
           const response = await rickAndMortyApi.getCharactersByPage(currentPage);
           setCharacters(response.results);
         } catch (err) {
@@ -32,3 +34,9 @@ export const useRickAndMorty = () => {
 
     return { characters, loading, error, currentPage, setPage };
   };
+
+  function delay(ms: number): Promise<void> {
+    return new Promise<void>(resolve =>
+        setTimeout(resolve, ms)
+    )
+  }
