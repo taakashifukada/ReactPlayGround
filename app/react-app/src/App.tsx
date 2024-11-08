@@ -6,6 +6,7 @@ import About from './components/About';
 import Login from './components/Login';
 import Form from './components/Form';
 import { RickAndMortyList } from './components/RickAndMorty';
+import Async from './components/Async';
 
 
 function App() {
@@ -25,6 +26,7 @@ function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/form" element={<Form />} />
           <Route path='/rickandmorty' element={<RickAndMortyList />} />
+          <Route path="/async" element={<Async />}/>
         </Route>
       </Routes>
     </Router>
