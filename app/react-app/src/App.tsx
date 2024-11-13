@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, Outlet } from "react-router-dom"
 import Home from './components/Home';
-import About from './components/About';
+import Typography from './components/Typography';
 import Login from './components/Login';
 import Form from './components/Form';
 import { RickAndMortyList } from './components/RickAndMorty';
@@ -21,7 +21,7 @@ function App() {
           }
         >
           <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
+          <Route path="/typo" element={<Typography />} />
           <Route path="/login" element={<Login />} />
           <Route path="/form" element={<Form />} />
           <Route path='/rickandmorty' element={<RickAndMortyList />} />
